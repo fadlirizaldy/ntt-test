@@ -32,6 +32,10 @@ export const router = createBrowserRouter([
         path: "product/create",
         element: <ProductForm />,
       },
+      {
+        path: "product/edit/:id",
+        element: <ProductForm />,
+      },
     ],
   },
 ]);

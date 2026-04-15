@@ -56,9 +56,10 @@ const Product = () => {
     fetchProducts(debouncedSearchTerm, 0);
   }, [fetchProducts, debouncedSearchTerm]);
 
-  const handleDelete = (id: number) => {
-    deleteProduct(id);
+  const handleDelete = async (id: number) => {
+    await deleteProduct(id);
     setDeleteId(null);
+    fetchProducts(debouncedSearchTerm, skip);
   };
 
   const handlePageChange = (page: number) => {

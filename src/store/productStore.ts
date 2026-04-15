@@ -21,6 +21,12 @@ interface ProductState {
   limit: number;
   fetchProducts: (searchTerm?: string, skip?: number) => Promise<void>;
   deleteProduct: (id: number) => void;
+  fetchProductById: (id: number) => Promise<Product | void>;
+  postProduct: (product: Omit<Product, "id">) => Promise<Product | void>;
+  editProduct: (
+    id: number,
+    updatedProduct: Omit<Product, "id">,
+  ) => Promise<Product | void>;
 }
 
 export const useProductStore = create<ProductState>((set, get) => ({
@@ -62,8 +68,85 @@ export const useProductStore = create<ProductState>((set, get) => ({
     }
   },
 
-  deleteProduct: (id: number) => {
-    const { products } = get();
-    set({ products: products.filter((p) => p.id !== id) });
+  fetchProductById: async (id: number) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await fetch(`https://dummyjson.com/products/${id}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch product");
+      }
+      const data = await response.json();
+      set({ isLoading: false });
+      return data;
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : "An error occurred",
+        isLoading: false,
+      });
+    }
+  },
+
+  postProduct: async (product: Omit<Product, "id">) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await fetch(`https://dummyjson.com/products/add`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(product),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to add product");
+      }
+      const data = await response.json();
+      set({ isLoading: false });
+      return data;
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : "An error occurred",
+        isLoading: false,
+      });
+    }
+  },
+
+  editProduct: async (id: number, updatedProduct: Omit<Product, "id">) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await fetch(`https://dummyjson.com/products/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedProduct),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to update product");
+      }
+      const data = await response.json();
+      set({ isLoading: false });
+      return data;
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : "An error occurred",
+        isLoading: false,
+      });
+    }
+  },
+
+  deleteProduct: async (id: number) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await fetch(`https://dummyjson.com/products/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete product");
+      }
+      const data = await response.json();
+      set({ isLoading: false });
+      return data;
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : "An error occurred",
+        isLoading: false,
+      });
+    }
   },
 }));
