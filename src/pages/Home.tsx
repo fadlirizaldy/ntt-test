@@ -6,10 +6,15 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import { useProductStore } from "@/store/productStore";
+import { useEffect } from "react";
 
 const Home = () => {
   const { user } = useAuthStore();
-  const { total } = useProductStore();
+  const { total, fetchProducts } = useProductStore();
+
+  useEffect(() => {
+    fetchProducts("", 0, 1, true);
+  }, [fetchProducts]);
 
   return (
     <div className="space-y-6">

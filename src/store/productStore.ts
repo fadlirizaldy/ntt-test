@@ -19,7 +19,12 @@ interface ProductState {
   total: number;
   skip: number;
   limit: number;
-  fetchProducts: (searchTerm?: string, skip?: number) => Promise<void>;
+  fetchProducts: (
+    searchTerm?: string,
+    skip?: number,
+    limit?: number,
+    isCount?: boolean,
+  ) => Promise<void>;
   deleteProduct: (id: number) => void;
   fetchProductById: (id: number) => Promise<Product | void>;
   postProduct: (product: Omit<Product, "id">) => Promise<Product | void>;
@@ -37,15 +42,20 @@ export const useProductStore = create<ProductState>((set, get) => ({
   skip: 0,
   limit: 10,
 
-  fetchProducts: async (searchTerm?: string, skip = 0) => {
+  fetchProducts: async (
+    searchTerm?: string,
+    skip = 0,
+    limit = get().limit,
+    isCount = false,
+  ) => {
     set({ isLoading: true, error: null });
     try {
       let url = `https://dummyjson.com/products`;
 
       if (searchTerm && searchTerm.trim()) {
-        url = `https://dummyjson.com/products/search?q=${encodeURIComponent(searchTerm)}&limit=${get().limit}&skip=${skip}`;
+        url = `https://dummyjson.com/products/search?q=${encodeURIComponent(searchTerm)}&limit=${limit}&skip=${skip}`;
       } else {
-        url = `https://dummyjson.com/products?limit=${get().limit}&skip=${skip}`;
+        url = `https://dummyjson.com/products?limit=${limit}&skip=${skip}`;
       }
 
       const response = await fetch(url);
@@ -53,6 +63,11 @@ export const useProductStore = create<ProductState>((set, get) => ({
         throw new Error("Failed to fetch products");
       }
       const data = await response.json();
+
+      if (isCount) {
+        set({ total: data.total, isLoading: false });
+        return;
+      }
       set({
         products: data.products,
         total: data.total,
