@@ -101,7 +101,7 @@ const ProductForm = () => {
     }
 
     if (success) {
-      navigate("/product");
+      navigate("/products");
     }
   };
 
@@ -109,7 +109,7 @@ const ProductForm = () => {
     <div className="space-y-6">
       <Button
         variant="ghost"
-        onClick={() => navigate("/product")}
+        onClick={() => navigate("/products")}
         className="cursor-pointer"
       >
         <ArrowLeft className="mr-2 h-4 w-4" />
@@ -255,7 +255,7 @@ const ProductForm = () => {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => navigate("/product")}
+                onClick={() => navigate("/products")}
                 disabled={isLoading}
                 className="cursor-pointer"
               >

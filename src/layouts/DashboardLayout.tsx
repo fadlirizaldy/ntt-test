@@ -28,7 +28,7 @@ export default function Layout() {
 
   const menuItems = [
     { path: "/", label: "Home", icon: Home },
-    { path: "/product", label: "Products", icon: Package },
+    { path: "/products", label: "Products", icon: Package },
   ];
 
   return (

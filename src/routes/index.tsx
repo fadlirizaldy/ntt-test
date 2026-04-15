@@ -1,4 +1,3 @@
-// src/routes/index.tsx
 import { createBrowserRouter } from "react-router";
 import DashboardLayout from "../layouts/DashboardLayout";
 import Login from "../pages/Login";
@@ -21,7 +20,7 @@ export const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "product",
+        path: "products",
         element: <Product />,
       },
       {
