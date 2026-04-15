@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-// import { useAuth } from '../contexts/AuthContext';
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -11,51 +10,52 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
+import { useAuthStore } from "@/store/authStore";
+import { Loader2 } from "lucide-react";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({
-    email: "",
+    username: "",
     password: "",
   });
-  // const { login } = useAuth();
+  const { user, login, isLoading, error, clearError } = useAuthStore();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Reset errors
+    clearError();
+
     const newErrors = {
-      email: "",
+      username: "",
       password: "",
     };
 
-    // Validate email
-    if (!email) {
-      newErrors.email = "Email is required";
+    if (!username) {
+      newErrors.username = "Username is required";
     }
-
-    // Validate password
     if (!password) {
       newErrors.password = "Password is required";
     }
 
-    // Set errors
     setErrors(newErrors);
 
-    // If there are any errors, don't submit
-    if (newErrors.email || newErrors.password) {
+    if (newErrors.username || newErrors.password) {
       return;
     }
 
-    navigate("/");
-    // const success = login(email, password);
-    // if (success) {
-    //   navigate('/');
-    // } else {
-    //   setErrors({ ...newErrors, password: 'Invalid credentials' });
-    // }
+    const success = await login(username, password);
+    if (success) {
+      navigate("/");
+    }
   };
 
   return (
@@ -69,27 +69,33 @@ const Login = () => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded text-sm">
+                {error}
+              </div>
+            )}
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="username">Username</Label>
               <Input
-                id="email"
-                type="email"
-                placeholder="admin@example.com"
-                value={email}
+                id="username"
+                type="text"
+                placeholder="Enter your username"
+                value={username}
                 onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (errors.email) {
-                    setErrors({ ...errors, email: "" });
+                  setUsername(e.target.value);
+                  if (errors.username) {
+                    setErrors({ ...errors, username: "" });
                   }
                 }}
                 className={
-                  errors.email
+                  errors.username
                     ? "border-red-500 focus-visible:ring-red-500"
                     : ""
                 }
+                disabled={isLoading}
               />
-              {errors.email && (
-                <p className="text-sm text-red-600">{errors.email}</p>
+              {errors.username && (
+                <p className="text-sm text-red-600">{errors.username}</p>
               )}
             </div>
             <div className="space-y-2">
@@ -110,14 +116,30 @@ const Login = () => {
                     ? "border-red-500 focus-visible:ring-red-500"
                     : ""
                 }
+                disabled={isLoading}
               />
               {errors.password && (
                 <p className="text-sm text-red-600">{errors.password}</p>
               )}
             </div>
-            <Button type="submit" className="w-full cursor-pointer mt-3">
-              Sign In
+            <Button
+              type="submit"
+              className="w-full cursor-pointer mt-3"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                "Sign In"
+              )}
             </Button>
+            <p className="text-xs text-gray-500 text-center mt-2">
+              Try: username: <span className="font-semibold">emilys</span> |
+              password: <span className="font-semibold">emilyspass</span>
+            </p>
           </form>
         </CardContent>
       </Card>

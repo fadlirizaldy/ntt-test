@@ -1,15 +1,22 @@
 import { Outlet, Link, useNavigate, useLocation } from "react-router";
-// import { useAuth } from '../contexts/AuthContext';
-import { Home, Package, LogOut, LayoutDashboard } from "lucide-react";
+import { Home, Package, LogOut, LayoutDashboard, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/store/authStore";
+import { useEffect } from "react";
 
 export default function Layout() {
-  // const { user, logout } = useAuth();
+  const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
 
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
   const handleLogout = () => {
-    // logout();
+    logout();
     navigate("/login");
   };
 
@@ -26,7 +33,6 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
       <aside className="w-64 bg-white border-r min-h-screen">
         <div className="p-4 border-b h-16 flex items-center">
           <div className="flex items-center gap-2">
@@ -55,18 +61,35 @@ export default function Layout() {
         </nav>
       </aside>
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        {/* Navbar */}
         <header className="bg-white border-b h-16">
           <div className="h-full px-6 flex items-center justify-end gap-4">
-            {/* <span className="text-sm">{user?.name}</span> */}
-            <span className="text-sm">fadli</span>
+            {user && (
+              <div className="flex items-center gap-3">
+                {user.image ? (
+                  <img
+                    src={user.image}
+                    alt={user.username}
+                    className="h-8 w-8 rounded-full"
+                  />
+                ) : (
+                  <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                    <User className="h-4 w-4 text-gray-600" />
+                  </div>
+                )}
+                <div className="text-sm">
+                  <p className="font-medium">
+                    {user.firstName} {user.lastName}
+                  </p>
+                  <p className="text-xs text-gray-500">@{user.username}</p>
+                </div>
+              </div>
+            )}
             <Button
               variant="outline"
               onClick={handleLogout}
               size="sm"
-              className="gap-2"
+              className="gap-2 cursor-pointer"
             >
               <LogOut className="h-4 w-4" />
               Logout

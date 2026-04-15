@@ -1,18 +1,23 @@
 // import { useAuth } from '../contexts/AuthContext';
+import { useAuthStore } from "@/store/authStore";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
+import { useProductStore } from "@/store/productStore";
 
 const Home = () => {
-  // const { user } = useAuth();
+  const { user } = useAuthStore();
+  const { total } = useProductStore();
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl mb-2">Welcome back, {/*user?.name*/}fadli!</h1>
+        <h1 className="text-3xl mb-2">
+          Welcome back, {user?.firstName} {user?.lastName}!
+        </h1>
         <p className="text-gray-600">
           Here's what's happening with your admin panel today.
         </p>
@@ -24,9 +29,7 @@ const Home = () => {
             <CardTitle className="text-sm">Total Products</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl">
-              {JSON.parse(localStorage.getItem("products") || "[]").length}
-            </div>
+            <div className="text-2xl">{total}</div>
           </CardContent>
         </Card>
 
@@ -35,7 +38,9 @@ const Home = () => {
             <CardTitle className="text-sm">Active User</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl">{/*user?.email*/}fadli@example.com</div>
+            <div className="text-2xl truncate" title={user?.email}>
+              {user?.email}
+            </div>
           </CardContent>
         </Card>
 
