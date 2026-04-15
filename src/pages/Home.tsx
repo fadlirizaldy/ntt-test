@@ -1,9 +1,53 @@
-import React from "react";
+// import { useAuth } from '../contexts/AuthContext';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
 
 const Home = () => {
+  // const { user } = useAuth();
+
   return (
-    <div>
-      <h2>HOME</h2>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl mb-2">Welcome back, {/*user?.name*/}fadli!</h1>
+        <p className="text-gray-600">
+          Here's what's happening with your admin panel today.
+        </p>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm">Total Products</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl">
+              {JSON.parse(localStorage.getItem("products") || "[]").length}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm">Active User</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl">{/*user?.email*/}fadli@example.com</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm">Status</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl text-green-600">Active</div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
